@@ -1,6 +1,5 @@
 #include "fof.hpp"
 #include <list>
-#include <set>
 #include <iostream>
 #include <cmath>
 
