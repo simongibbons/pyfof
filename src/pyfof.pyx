@@ -5,6 +5,11 @@ Created on Thu Mar 26 17:59:28 2015
 @author: sljg2
 """
 
+__all__ = ["friends_of_friends"]
+__version__ = "0.1"
+__author__ = "Simon Gibbons (sljg2@ast.cam.ac.uk)"
+__copyright__ = "Copyright 2015 Simon Gibbons"
+
 cimport numpy as np
 from libcpp.list cimport list
 
