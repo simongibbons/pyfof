@@ -33,7 +33,6 @@ std::list< std::list<size_t> > friends_of_friends(double *data, size_t npts, siz
         toadd.push_back(unused.front());
         unused.pop_front();
 
-        auto toadd_it = toadd.begin();
         for(auto toadd_it = toadd.begin() ; toadd_it != toadd.end() ; ++ toadd_it) {
             auto unused_it = unused.begin();
             while(unused_it != unused.end()) {
