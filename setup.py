@@ -1,6 +1,28 @@
 from distutils.core import setup, Extension
-from Cython.Build import cythonize
+import numpy
 
+try:
+    from Cython.Build import cythonize
+    USE_CYTHON = True
+except ImportError:
+    USE_CYTHON = False
+
+
+USE_CYTHON = False
+
+ext = '.pyx' if USE_CYTHON else '.cpp'
+
+
+extensions = [Extension(
+                "pyfof",
+                sources=["src/pyfof"+ext, "src/fof.cc"],
+                extra_compile_args=["-std=c++11"],
+                include_dirs=[numpy.get_include()],
+                language="c++"
+            )]
+
+if USE_CYTHON:
+    extensions = cythonize(extensions)
 
 setup(  name = "pyfof",
         version="0.1",
@@ -11,10 +33,5 @@ setup(  name = "pyfof",
         download_url = 'https://github.com/simongibbons/pyfof/tarball/0.1',
         keywords=['clustering', 'friends-of-friends'],
 
-        ext_modules = cythonize(Extension(
-            "pyfof",
-            sources=["src/pyfof.pyx", "src/fof.cc"],
-            extra_compile_args=["-std=c++11"],
-            language="c++"
-        ))
+        ext_modules = extensions
     )
