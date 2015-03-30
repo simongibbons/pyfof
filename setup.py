@@ -75,6 +75,7 @@ setup(  name = "pyfof",
         author="Simon Gibbons",
         author_email="sljg2@ast.cam.ac.uk",
         url="https://github.com/simongibbons/pyfof",
+        licence="MIT",
         keywords=['clustering', 'friends-of-friends'],
 
         cmdclass={'build_ext' : build_ext},
