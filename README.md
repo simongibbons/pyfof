@@ -22,7 +22,8 @@ accelerated with an R*-tree.
     import pyfof
 
     npts = 10000
-    data = np.vstack((np.random.normal(-1,0.2,(npts/2,2)), np.random.normal(1,0.2,(npts/2,2))))
+    data = np.vstack((np.random.normal(-1,0.2,(npts/2,2)),\
+                      np.random.normal(1,0.2,(npts/2,2))))
 
     groups = pyfof.friends_of_friends(data, 0.4)
 
