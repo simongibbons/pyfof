@@ -8,7 +8,7 @@ accelerated with an R*-tree.
 
 ## Requirements
  * c++11 complient compiler
- * [Cython](http://cython.org/)
+ * [Cython](http://cython.org/) (for the development version only)
  * [numpy](http://www.numpy.org/)
  * [boost](http://www.boost.org/)
 
