@@ -37,3 +37,6 @@ plt.show()
 
 ![gaussian_example](/../screenshots/img/gaussian_example.png)
 
+### A more complicated example
+
+![stream_example](/../screenshots/img/stream_example.png)
