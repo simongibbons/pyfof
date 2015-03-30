@@ -1,0 +1,3 @@
+include README.md
+include pyfof/*.pyx
+include pyfof/*.hpp
