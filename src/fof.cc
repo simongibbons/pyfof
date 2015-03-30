@@ -90,9 +90,8 @@ friends_of_friends_rtree(double *data, size_t npts, double linking_length)
     while( !tree.empty() ) {
         std::list< value_t > to_add;
 
-        //Grab a point from the tree - doing a nearest query here seems pretty
-        //wasteful but this works for now!
-        tree.query( bgi::nearest(points[0].first, 1), std::back_inserter(to_add) );
+        // Grab a point from the tree.
+        to_add.push_back( *tree.qbegin( bgi::satisfies([](value_t const &){return true;})) );
         tree.remove( to_add.begin(), to_add.end() );
 
         for( auto it = to_add.begin() ; it != to_add.end() ; ++it ) {
