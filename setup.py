@@ -11,7 +11,7 @@ ext = '.pyx' if USE_CYTHON else '.cpp'
 
 extensions = [Extension(
                 "pyfof",
-                sources=["src/pyfof"+ext, "src/fof.cc"],
+                sources=["pyfof/pyfof"+ext, "pyfof/fof.cc"],
                 extra_compile_args=["-std=c++11"],
                 include_dirs=[numpy.get_include()],
                 language="c++"
