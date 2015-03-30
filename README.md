@@ -10,3 +10,4 @@ with a python wrapper.
  * c++11 complient compiler
  * [Cython](http://cython.org/)
  * [numpy](http://www.numpy.org/)
+ * [boost](http://www.boost.org/)
