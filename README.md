@@ -12,6 +12,18 @@ accelerated with an R*-tree.
  * [numpy](http://www.numpy.org/)
  * [boost](http://www.boost.org/)
 
+## Installation
+
+If your boost installation is in a normal place you should just be able to install
+the latest release of the package directly from PyPI
+
+```pip install pyfof```
+
+If that fails then you will need to tell pip where to find your boost include
+directory
+
+```pip install pyfof --install-option="--include /path/to/boost/include/dir"```
+
 ## Examples
 
 ### Two Gaussian blobs
