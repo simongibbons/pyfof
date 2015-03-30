@@ -14,7 +14,7 @@ cimport numpy as np
 from libcpp.list cimport list
 
 cdef extern from "fof.hpp":
-    cdef list[list[size_t]] _friends_of_friends "friends_of_friends"(double*, size_t, size_t, double)
+    cdef list[list[size_t]] _friends_of_friends "friends_of_friends"(double*, size_t, size_t, double) except +
 
 def friends_of_friends(np.ndarray[double, ndim=2, mode="c"] data, double linking_length):
     """ Computes friends-of-friends clustering of data. Distances are computed
