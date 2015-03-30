@@ -31,8 +31,6 @@ def find_boost(hint=None, verbose=True):
         "/data/sljg2/software/boost/include"
     ]
 
-    print search_dirs
-
     for d in search_dirs:
         path = os.path.join(d, "boost", "geometry", "index", "rtree.hpp")
         if os.path.exists(path):
