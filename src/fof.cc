@@ -1,5 +1,3 @@
-#include <iostream>
-#include <random>
 #include <vector>
 #include <list>
 #include <cmath>
@@ -12,7 +10,7 @@ namespace bg = boost::geometry;
 namespace bmpl = boost::mpl;
 namespace bgi = bg::index;
 
-// Metafunction to create a D dimensional point from a pointer
+// Create a D dimensional point from an array of coordinates
 template <size_t D>
 struct point_setter {
     typedef bg::model::point<double, D, bg::cs::cartesian> point_t;
@@ -30,12 +28,10 @@ struct point_setter {
 
 };
 
-// Metafunction to calculate the square of the euclidian distance between
-// two D dimensional points.
+// Calculate the square of the euclidian distance between two points
 template <size_t D>
 struct d2_calc {
     typedef bg::model::point<double, D, bg::cs::cartesian> point_t;
-    typedef std::pair<point_t, size_t> value_t;
 
     const point_t &p1;
     const point_t &p2;
@@ -50,20 +46,37 @@ struct d2_calc {
     }
 };
 
+// Add a scaler to all the coordinates of a point
+template <size_t D>
+struct add_scalar_to_point {
+    typedef bg::model::point<double, D, bg::cs::cartesian> point_t;
+
+    point_t &p;
+    double c;
+
+    add_scalar_to_point(point_t &p, double c) : p(p), c(c)
+    {}
+
+    template< typename U > void operator()(U i)
+    {
+        double new_coord = bg::get<i>(p) + c;
+        bg::set<i>(p, new_coord);
+    }
+
+};
 
 template <size_t D>
-std::list< std::list<size_t> > friends_of_friends_rtree(double *data, size_t npts, double linking_length)
+std::list< std::list<size_t> >
+friends_of_friends_rtree(double *data, size_t npts, double linking_length)
 {
-    std::cerr << "Running with " << D << " dimensions" << std::endl;
-
     typedef bg::model::point<double, D, bg::cs::cartesian> point_t;
     typedef std::pair<point_t, size_t> value_t;
     typedef bgi::rtree< value_t, bgi::rstar<16> > tree_t;
+    typedef bmpl::range_c<size_t, 0, D> dim_range;
 
     std::vector< std::pair<point_t, size_t> > points;
     points.reserve(npts);
 
-    typedef bmpl::range_c<size_t, 0, D> dim_range;
     for(size_t i = 0 ; i<npts ; ++i) {
         point_t point;
         bmpl::for_each< dim_range >( point_setter<D>(point, data + i*D) );
@@ -76,13 +89,36 @@ std::list< std::list<size_t> > friends_of_friends_rtree(double *data, size_t npt
 
     while( !tree.empty() ) {
         std::list< value_t > to_add;
+
+        //Grab a point from the tree - doing a nearest query here seems pretty
+        //wasteful but this works for now!
         tree.query( bgi::nearest(points[0].first, 1), std::back_inserter(to_add) );
         tree.remove( to_add.begin(), to_add.end() );
 
         for( auto it = to_add.begin() ; it != to_add.end() ; ++it ) {
             std::list< value_t >  added;
-            // tree.query( "query for all points in a ball around it", std::back_inserter(added) );
+
+            // Build box to query
+            point_t lower = it->first;
+            bmpl::for_each< dim_range >( add_scalar_to_point<D>(lower, -linking_length) );
+            point_t upper = it->first;
+            bmpl::for_each< dim_range >( add_scalar_to_point<D>(upper, +linking_length));
+
+            bg::model::box< point_t > box( lower, upper );
+
+            auto within_ball = [&it, linking_length](value_t const &v) {
+                double d2 = 0.;
+                bmpl::for_each< dim_range >( d2_calc<D>(it->first, v.first, d2) );
+                return sqrt(d2) < linking_length;
+            };
+
+            // Find all points within a linking length of the current point.
+            tree.query( bgi::within(box) && bgi::satisfies(within_ball), std::back_inserter(added) );
+
+            // Remove any points we find from the tree as they have been assigned.
             tree.remove( added.begin(), added.end() );
+
+            // Add the found points to the list so we can find their "friends" as well
             to_add.splice(to_add.end(), added);
         }
 
@@ -93,45 +129,11 @@ std::list< std::list<size_t> > friends_of_friends_rtree(double *data, size_t npt
         groups.push_back(group);
     }
 
-
-    // Psudo code for the algorithm
-    // 
-    // 1) Pick a random point from the tree to begin a group/
-    // 2) Query tree to find neighbouring points
-    // 3) For each added point do the same.
-    // 4) When no more points to add finish.
-    // 5) Repeat until the tree is empty.
-
-    // std::list< value_t > result;
-
-
-    // point_t center(-1.0, -1.0);
-    // bg::model::box< point_t > box( point_t(-1.3, -1.3), point_t(-0.7, -0.7) );
-
-    // auto within_ball = [&center, linking_length](value_t const& v) {
-    //     double d2 = 0.;
-    //     bmpl::for_each< dim_range >( d2_calc<D>(center, v.first, d2) );
-    //     return sqrt(d2) < linking_length;
-    // };
-
-    // tree.query( bgi::within(box) && bgi::satisfies(within_ball) , std::back_inserter(result) );
-    // tree.remove( result.begin(), result.end() );
-
-    // std::list< value_t > rest;
-    // bg::model::box< point_t > box2( point_t(-5, -5), point_t(5, 5) );
-    // tree.query( bgi::within(box2), std::back_inserter(rest));
-
-    // for(auto r : rest) {
-    //     double x = bg::get<0>(r.first);
-    //     double y = bg::get<1>(r.first);
-    //     std::cout << x << " " << y << std::endl;
-    // }
-
-
     return groups;
 }
 
-inline double dist(double *p1, double *p2, size_t ndim)
+inline double
+dist(double *p1, double *p2, size_t ndim)
 {
     double d2 = 0.;
     for(size_t i = 0 ; i < ndim ; ++i) {
@@ -140,7 +142,9 @@ inline double dist(double *p1, double *p2, size_t ndim)
     return sqrt(d2);
 }
 
-std::list< std::list<size_t> > friends_of_friends_brute(double *data, size_t npts, size_t ndim, double linking_length)
+// A brute force friends of friends finder without the Rtree accelerator.
+std::list< std::list<size_t> >
+friends_of_friends_brute(double *data, size_t npts, size_t ndim, double linking_length)
 {
     std::cerr << "Using non tree accelerated version" << std::endl;
     typedef std::pair<size_t, double*> Point;
@@ -181,51 +185,25 @@ std::list< std::list<size_t> > friends_of_friends_brute(double *data, size_t npt
     return groups;
 }
 
-std::list< std::list<size_t> > friends_of_friends(double *data, size_t npts, size_t ndim, double linking_length)
+std::list< std::list<size_t> >
+friends_of_friends(double *data, size_t npts, size_t ndim, double linking_length)
 {
     switch(ndim) {
-        // case 1:
-        //     return friends_of_friends_rtree<1>(data, npts, linking_length);
-        //     break;
+        case 1:
+            return friends_of_friends_rtree<1>(data, npts, linking_length);
+            break;
         case 2:
             return friends_of_friends_rtree<2>(data, npts, linking_length);
             break;
-        // case 3:
-        //     return friends_of_friends_rtree<3>(data, npts, linking_length);
-        //     break;
+        case 3:
+            return friends_of_friends_rtree<3>(data, npts, linking_length);
+            break;
+        case 4:
+            return friends_of_friends_rtree<4>(data, npts, linking_length);
+            break;
         default:
             return friends_of_friends_brute(data, npts, ndim, linking_length);
             break;
     }
 }
 
-
-int main(int argc, char const *argv[])
-{
-    const size_t ndim = 2;
-
-    std::mt19937 generator;
-    std::normal_distribution<double> dist1(1.0, 0.1);
-    std::normal_distribution<double> dist2(-1.0, 0.1);
-
-    std::vector< double > coords;
-
-    for(size_t i=0 ; i<50000 ; ++i) {
-        for( size_t j=0 ; j<ndim ; ++j ) {
-            coords.push_back( dist1(generator) );
-        }
-    }
-    for(size_t i=0 ; i<50000 ; ++i) {
-        for( size_t j=0 ; j<ndim ; ++j ) {
-            coords.push_back( dist2(generator) );
-        }
-    }
-
-    auto groups = friends_of_friends(coords.data(), coords.size() / ndim, ndim, 0.3);
-
-    std::cerr << "Ngroups = " << groups.size() << std::endl;
-
-
-
-    return 0;
-}

@@ -7,11 +7,7 @@ try:
 except ImportError:
     USE_CYTHON = False
 
-
-USE_CYTHON = False
-
 ext = '.pyx' if USE_CYTHON else '.cpp'
-
 
 extensions = [Extension(
                 "pyfof",
