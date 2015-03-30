@@ -8,7 +8,7 @@ accelerated with an R*-tree.
 
 ## Requirements
  * c++11 complient compiler
- * [Cython](http://cython.org/)
+ * [Cython](http://cython.org/) (for the development version only)
  * [numpy](http://www.numpy.org/)
  * [boost](http://www.boost.org/)
 
@@ -20,9 +20,15 @@ the latest release of the package directly from PyPI
 ```pip install pyfof```
 
 If that fails then you will need to tell pip where to find your boost include
-directory
+directory. This can be done by creating a file in your home directory called
+```.pydistutils.cfg``` containing:
 
-```pip install pyfof --install-option="--include /path/to/boost/include/dir"```
+```
+[build_ext]
+include_dirs=/path/to/boost/include/directory
+```
+
+and then running the above command.
 
 ## Examples
 
