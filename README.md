@@ -25,7 +25,7 @@ directory. This can be done by creating a file in your home directory called
 
 ```
 [build_ext]
-include_dirs=/home/sljg2/software/include
+include_dirs=/path/to/boost/include/directory
 ```
 
 and then running the above command.
