@@ -20,9 +20,15 @@ the latest release of the package directly from PyPI
 ```pip install pyfof```
 
 If that fails then you will need to tell pip where to find your boost include
-directory
+directory. This can be done by creating a file in your home directory called
+```.pydistutils.cfg``` containing:
 
-```pip install pyfof --install-option="--include /path/to/boost/include/dir"```
+```
+[build_ext]
+include_dirs=/home/sljg2/software/include
+```
+
+and then running the above command.
 
 ## Examples
 
