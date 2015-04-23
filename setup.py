@@ -75,7 +75,7 @@ setup(  name = "pyfof",
         author="Simon Gibbons",
         author_email="sljg2@ast.cam.ac.uk",
         url="https://github.com/simongibbons/pyfof",
-        download_url = "https://github.com/simongibbons/pyfof/tarball/v0.1.2"
+        download_url = "https://github.com/simongibbons/pyfof/tarball/v0.1.2",
         license="MIT",
         keywords=['clustering', 'friends-of-friends'],
 
