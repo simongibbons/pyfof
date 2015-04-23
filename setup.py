@@ -70,11 +70,12 @@ if USE_CYTHON:
     extensions = cythonize(extensions)
 
 setup(  name = "pyfof",
-        version="0.2-dev",
+        version="0.1.2",
         description="Friends-of-friends cluster finding in python",
         author="Simon Gibbons",
         author_email="sljg2@ast.cam.ac.uk",
         url="https://github.com/simongibbons/pyfof",
+        download_url = "https://github.com/simongibbons/pyfof/tarball/v0.1.2"
         license="MIT",
         keywords=['clustering', 'friends-of-friends'],
 
