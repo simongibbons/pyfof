@@ -11,6 +11,7 @@ __author__ = "Simon Gibbons (sljg2@ast.cam.ac.uk)"
 __copyright__ = "Copyright 2015 Simon Gibbons"
 
 cimport numpy as np
+import numpy as np
 from libcpp.list cimport list
 
 cdef extern from "fof.hpp":
