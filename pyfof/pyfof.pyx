@@ -6,7 +6,7 @@ Created on Thu Mar 26 17:59:28 2015
 """
 
 __all__ = ["friends_of_friends"]
-__version__ = "0.1"
+__version__ = "0.1.3-dev"
 __author__ = "Simon Gibbons (sljg2@ast.cam.ac.uk)"
 __copyright__ = "Copyright 2015 Simon Gibbons"
 
@@ -30,6 +30,9 @@ def friends_of_friends(np.ndarray[double, ndim=2] data, double linking_length):
     cdef np.ndarray[double, ndim=2, mode='c'] data_corder
 
     data_corder = data if data.flags['C_CONTIGUOUS'] else data.copy(order='C')
+
+    if np.any( np.isnan(data_corder) ):
+        raise ValueError("NaN detected in pyfof")
 
     return _friends_of_friends(&data_corder[0,0],\
                                data.shape[0],\
