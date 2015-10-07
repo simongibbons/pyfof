@@ -24,12 +24,19 @@ def find_boost(hint=None, verbose=True):
     """
 
     search_dirs = [] if hint is None else hint
+
+    try:
+        search_dirs.append( os.path.join( os.environ["BOOST_DIR"], "include") )
+    except KeyError:
+        pass
+
     search_dirs += [
         "/usr/local/include",
         "/usr/local/homebrew/include",
         "/opt/local/include",
         "/data/sljg2/software/boost/include"
     ]
+
 
     for d in search_dirs:
         path = os.path.join(d, "boost", "geometry", "index", "rtree.hpp")
