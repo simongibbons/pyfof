@@ -84,6 +84,9 @@ setup(  name = "pyfof",
         url="https://github.com/simongibbons/pyfof",
         license="MIT",
         keywords=['clustering', 'friends-of-friends'],
+        install_requires=[
+            'numpy',
+        ]
 
         cmdclass={'build_ext' : build_ext},
         ext_modules = extensions
