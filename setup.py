@@ -86,7 +86,7 @@ setup(  name = "pyfof",
         keywords=['clustering', 'friends-of-friends'],
         install_requires=[
             'numpy',
-        ]
+        ],
 
         cmdclass={'build_ext' : build_ext},
         ext_modules = extensions
