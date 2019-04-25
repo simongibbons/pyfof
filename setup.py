@@ -4,7 +4,6 @@ import re
 from setuptools import setup, Extension
 from setuptools.command.build_ext import build_ext as _build_ext
 
-import numpy
 
 try:
     from Cython.Build import cythonize
@@ -31,6 +30,7 @@ def find_boost(hint=None, verbose=True):
         pass
 
     search_dirs += [
+        "/usr/include",
         "/usr/local/include",
         "/usr/local/homebrew/include",
         "/opt/local/include",
@@ -62,14 +62,17 @@ class build_ext(_build_ext):
 
         ext.include_dirs.append(boost_include)
 
+        import numpy as np
+        ext.include_dirs.append(np.get_include())
+
+
         _build_ext.build_extension(self, ext)
 
 
 extensions = [Extension(
                 "pyfof",
                 sources=["pyfof/pyfof"+ext, "pyfof/fof.cc"],
-                extra_compile_args=["-std=c++11"],
-                include_dirs=[numpy.get_include()],
+                extra_compile_args=["-std=c++11", "-Wno-return-type"],
                 language="c++"
             )]
 
@@ -80,14 +83,17 @@ setup(  name = "pyfof",
         version="0.2-dev",
         description="Friends-of-friends cluster finding in python",
         author="Simon Gibbons",
-        author_email="sljg2@ast.cam.ac.uk",
+        author_email="simongibbons@gmail.com",
         url="https://github.com/simongibbons/pyfof",
         license="MIT",
         keywords=['clustering', 'friends-of-friends'],
         install_requires=[
             'numpy',
         ],
-
+        setup_requires=[
+            'numpy',
+            'cython',
+        ],
         cmdclass={'build_ext' : build_ext},
         ext_modules = extensions
     )
