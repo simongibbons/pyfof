@@ -24,10 +24,11 @@ def find_boost(hint=None, verbose=True):
 
     search_dirs = [] if hint is None else hint
 
-    try:
+    if 'BOOST_DIR' in os.environ:
         search_dirs.append( os.path.join( os.environ["BOOST_DIR"], "include") )
-    except KeyError:
-        pass
+
+    if 'CONDA_PREFIX' in os.environ:
+        search_dirs.append(os.path.join(os.environ['CONDA_PREFIX'], 'include'))
 
     search_dirs += [
         "/usr/include",
