@@ -3,6 +3,7 @@
 #include <list>
 #include <cmath>
 
+#include <boost/geometry/geometry.hpp>
 #include <boost/geometry/index/rtree.hpp>
 #include <boost/mpl/range_c.hpp>
 #include <boost/mpl/for_each.hpp>
@@ -72,7 +73,7 @@ friends_of_friends_rtree(double *data, size_t npts, double linking_length)
 {
     typedef bg::model::point<double, D, bg::cs::cartesian> point_t;
     typedef std::pair<point_t, size_t> value_t;
-    typedef bgi::rtree< value_t, bgi::rstar<16> > tree_t;
+    using tree_t =  bgi::rtree< value_t, bgi::linear<16> >;
     typedef bmpl::range_c<size_t, 0, D> dim_range;
 
     std::vector< std::pair<point_t, size_t> > points;
