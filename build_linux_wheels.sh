@@ -5,7 +5,7 @@ set -ex
 function build_wheels() {
     echo "Building Wheels"
 
-    #docker build . -t pyfof -f Dockerfile-manylinux
+    docker build . -t pyfof -f Dockerfile-manylinux
     CONTAINER_ID=$(docker create pyfof)
     trap "docker rm -f ${CONTAINER_ID} > /dev/null || true" EXIT INT TERM
 
