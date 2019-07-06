@@ -1,4 +1,4 @@
-FROM quay.io/pypa/manylinux2010_x86_64
+FROM quay.io/pypa/manylinux1_x86_64
 
 # Install boost
 RUN curl -L -O https://dl.bintray.com/boostorg/release/1.70.0/source/boost_1_70_0.tar.gz && \
