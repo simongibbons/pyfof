@@ -87,7 +87,7 @@ if USE_CYTHON:
     extensions = cythonize(extensions)
 
 setup(  name = "pyfof",
-        version="0.1.3",
+        version="0.1.4",
         description="Friends-of-friends cluster finding in python",
         author="Simon Gibbons",
         author_email="simongibbons@gmail.com",
