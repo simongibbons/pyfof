@@ -1,5 +1,7 @@
 #! /bin/bash
 
+set -ex
+
 function build_wheels() {
     echo "Building Wheels"
 
@@ -10,10 +12,10 @@ function build_wheels() {
     docker start -ai ${CONTAINER_ID}
 
     mkdir -p wheelhouse
-    docker cp ${CONTAINER_ID}:/app/wheelhouse/pyfof* wheelhouse
+    docker cp ${CONTAINER_ID}:/app/wheelhouse .
 }
 
 build_wheels
 
 echo "Built the following wheels"
-ls -l ./wheelhouse/*
+ls -l ./wheelhouse/pyfof*
