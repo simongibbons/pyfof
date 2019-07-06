@@ -1,20 +1,19 @@
 #! /bin/bash
 
 function build_wheels() {
-    echo "Building Wheels for $1"
+    echo "Building Wheels"
 
-    docker build . -t pyfof -f Dockerfile-$1
+    docker build . -t pyfof -f Dockerfile-manylinux
     CONTAINER_ID=$(docker create pyfof)
     trap "docker rm -f ${CONTAINER_ID} > /dev/null || true" EXIT INT TERM
 
     docker start -ai ${CONTAINER_ID}
 
-    docker cp ${CONTAINER_ID}:/app/dist/ .
+    mkdir -p wheelhouse
+    docker cp ${CONTAINER_ID}:/app/wheelhouse/pyfof* wheelhouse
 }
 
-build_wheels py27
-build_wheels py36
-build_wheels py37
+build_wheels
 
 echo "Built the following wheels"
-ls -l ./dist/*
+ls -l ./wheelhouse/*
