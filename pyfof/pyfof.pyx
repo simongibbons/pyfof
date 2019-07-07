@@ -12,10 +12,10 @@ __copyright__ = "Copyright 2015 Simon Gibbons"
 
 cimport numpy as np
 import numpy as np
-from libcpp.list cimport list
+from libcpp.vector cimport vector
 
 cdef extern from "fof.hpp":
-    cdef list[list[size_t]] _friends_of_friends "friends_of_friends"(double*, size_t, size_t, double) except +
+    cdef vector[vector[size_t]] _friends_of_friends "friends_of_friends"(double*, size_t, size_t, double) except +
 
 def friends_of_friends(np.ndarray[double, ndim=2] data, double linking_length):
     """ Computes friends-of-friends clustering of data. Distances are computed

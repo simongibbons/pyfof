@@ -68,7 +68,7 @@ struct add_scalar_to_point {
 };
 
 template <size_t D>
-std::list< std::list<size_t> >
+std::vector< std::vector<size_t> >
 friends_of_friends_rtree(double *data, size_t npts, double linking_length)
 {
     typedef bg::model::point<double, D, bg::cs::cartesian> point_t;
@@ -87,17 +87,20 @@ friends_of_friends_rtree(double *data, size_t npts, double linking_length)
 
     tree_t tree(points.begin(), points.end());
 
-    std::list< std::list< size_t > > groups;
+    std::vector< std::vector< size_t > > groups;
 
     while( !tree.empty() ) {
-        std::list< value_t > to_add;
+        std::vector< value_t > to_add;
 
         // Grab a point from the tree.
         to_add.push_back( *tree.qbegin( bgi::satisfies([](value_t const &){return true;})) );
         tree.remove( to_add.begin(), to_add.end() );
 
-        for( auto it = to_add.begin() ; it != to_add.end() ; ++it ) {
-            std::list< value_t >  added;
+
+        for( auto to_add_i = size_t(0) ; to_add_i < to_add.size() ; ++to_add_i ) {
+            std::vector< value_t >  added;
+
+            auto it = to_add.begin() + to_add_i;
 
             // Build box to query
             point_t lower = it->first;
@@ -116,14 +119,21 @@ friends_of_friends_rtree(double *data, size_t npts, double linking_length)
             // Find all points within a linking length of the current point.
             tree.query( bgi::within(box) && bgi::satisfies(within_ball), std::back_inserter(added) );
 
+            // Add the found points to the list so we can find their "friends" as well
+            for (auto p: added) {
+                to_add.push_back(p);
+            }
+
             // Remove any points we find from the tree as they have been assigned.
             tree.remove( added.begin(), added.end() );
 
-            // Add the found points to the list so we can find their "friends" as well
-            to_add.splice(to_add.end(), added);
+            // Early exit when we have assigned all particles to a group
+            if (tree.empty()) {
+                break;
+            }
         }
 
-        std::list< size_t > group;
+        std::vector< size_t > group;
         for( auto p : to_add ) {
             group.push_back(p.second);
         }
@@ -144,7 +154,7 @@ dist(double *p1, double *p2, size_t ndim)
 }
 
 // A brute force friends of friends finder without the Rtree accelerator.
-std::list< std::list<size_t> >
+std::vector< std::vector<size_t> >
 friends_of_friends_brute(double *data, size_t npts, size_t ndim, double linking_length)
 {
     std::cerr << "Using non tree accelerated version" << std::endl;
@@ -183,10 +193,15 @@ friends_of_friends_brute(double *data, size_t npts, size_t ndim, double linking_
         groups.push_back(group);
     }
 
-    return groups;
+
+    auto result = std::vector<std::vector<size_t>>();
+    for (const auto& group : groups) {
+        result.push_back(std::vector<size_t>(group.cbegin(), group.cend()));
+    }
+    return result;
 }
 
-std::list< std::list<size_t> >
+std::vector< std::vector<size_t> >
 friends_of_friends(double *data, size_t npts, size_t ndim, double linking_length)
 {
     switch(ndim) {
