@@ -26,4 +26,3 @@ def test_uniform_grid(benchmark, use_brute):
     groups = benchmark(pyfof.friends_of_friends, data, 0.4, use_brute)
     assert len(groups) == num_points
     assert all(len(g) == 1 for g in groups)
-
