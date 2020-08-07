@@ -12,7 +12,18 @@ def test_two_gaussian_blobs(benchmark, use_brute):
         np.random.normal(1, 0.2, (points_per_blob, 2)),
     ])
 
-    groups = benchmark(lambda: pyfof.friends_of_friends(data, 0.4, use_brute))
+    groups = benchmark(pyfof.friends_of_friends, data, 0.4, use_brute)
     assert len(groups) == 2
     assert len(groups[0]) == points_per_blob
     assert len(groups[1]) == points_per_blob
+
+
+@pytest.mark.parametrize("use_brute", [False, True])
+def test_uniform_grid(benchmark, use_brute):
+    num_points = 20000
+    data = [[0, i] for i in range(num_points)]
+
+    groups = benchmark(pyfof.friends_of_friends, data, 0.4, use_brute)
+    assert len(groups) == num_points
+    assert all(len(g) == 1 for g in groups)
+
