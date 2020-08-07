@@ -17,7 +17,7 @@ from libcpp.vector cimport vector
 cdef extern from "fof.hpp":
     cdef vector[vector[size_t]] _friends_of_friends "friends_of_friends"(double*, size_t, size_t, double) except +
 
-def friends_of_friends(np.ndarray[double, ndim=2] data, double linking_length):
+def friends_of_friends(data, double linking_length):
     """ Computes friends-of-friends clustering of data. Distances are computed
     using a euclidian metric.
 
@@ -28,16 +28,21 @@ def friends_of_friends(np.ndarray[double, ndim=2] data, double linking_length):
         :rtype: A list of lists of indices in each cluster type
     """
 
-    cdef np.ndarray[double, ndim=2, mode='c'] data_corder
+    cdef np.ndarray[double, ndim=2, mode='c'] data_array = np.asarray(
+        data,
+        order='C',
+        dtype=np.float,
+    )
 
-    data_corder = data if data.flags['C_CONTIGUOUS'] else data.copy(order='C')
-
-    if np.any( np.isnan(data_corder) ):
+    if np.any( np.isnan(data) ):
         raise ValueError("NaN detected in pyfof")
 
-    return _friends_of_friends(&data_corder[0,0],\
-                               data.shape[0],\
-                               data.shape[1],\
-                               linking_length)
-
+    num_points = data_array.shape[0]
+    num_dimensions = data_array.shape[1]
+    return _friends_of_friends(
+        &data_array[0,0],
+        num_points,
+        num_dimensions,
+        linking_length,
+    )
 
