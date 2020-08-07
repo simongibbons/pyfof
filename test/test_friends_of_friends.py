@@ -27,11 +27,3 @@ def test_pass_in_points_as_a_list():
     ]
     assert pyfof.friends_of_friends(points, 0.4) == [[0], [1]]
 
-
-def test_pass_in_integer_points():
-    points = [
-        [0, 0],
-        [0, 0]
-    ]
-    assert pyfof.friends_of_friends(points, 0.4) == [[0, 1]]
-
