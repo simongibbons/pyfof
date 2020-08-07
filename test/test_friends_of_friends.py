@@ -26,3 +26,9 @@ def test_pass_in_points_as_a_list():
         [0, 0.5],
     ]
     assert pyfof.friends_of_friends(points, 0.4) == [[0], [1]]
+
+
+def test_use_brute_force_implementation():
+    points = [[0, 1], [0, 0]]
+    assert pyfof.friends_of_friends(points, 0.5, use_brute=True) == [[0], [1]]
+

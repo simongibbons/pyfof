@@ -16,14 +16,17 @@ from libcpp.vector cimport vector
 
 cdef extern from "fof.hpp":
     cdef vector[vector[size_t]] _friends_of_friends "friends_of_friends"(double*, size_t, size_t, double) except +
+    cdef vector[vector[size_t]] _friends_of_friends_brute "friends_of_friends_brute"(double*, size_t, size_t, double) except +
 
-def friends_of_friends(data, double linking_length):
+def friends_of_friends(data, double linking_length, bint use_brute = False):
     """ Computes friends-of-friends clustering of data. Distances are computed
     using a euclidian metric.
 
         :param data: A numpy array with dimensions (npoints x ndim)
 
         :param linking_length: The linking length between cluster members
+
+        :param use_brute: Use the brute force, non rtree code path
 
         :rtype: A list of lists of indices in each cluster type
     """
@@ -39,10 +42,19 @@ def friends_of_friends(data, double linking_length):
 
     num_points = data_array.shape[0]
     num_dimensions = data_array.shape[1]
-    return _friends_of_friends(
-        &data_array[0,0],
-        num_points,
-        num_dimensions,
-        linking_length,
-    )
+
+    if use_brute:
+        return _friends_of_friends_brute(
+            &data_array[0,0],
+            num_points,
+            num_dimensions,
+            linking_length,
+        )
+    else:
+        return _friends_of_friends(
+            &data_array[0,0],
+            num_points,
+            num_dimensions,
+            linking_length,
+        )
 
