@@ -43,6 +43,9 @@ def friends_of_friends(data, double linking_length, bint use_brute = False):
     num_points = data_array.shape[0]
     num_dimensions = data_array.shape[1]
 
+    if num_points == 0:
+        return []
+
     if use_brute:
         return _friends_of_friends_brute(
             &data_array[0,0],
