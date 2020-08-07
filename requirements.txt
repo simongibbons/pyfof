@@ -1,6 +1,7 @@
 Cython>=0.29.21,<1
 numpy>=1.18.5
 
-# benchmark
+# testing
 pytest==6.0.1
+flake8==3.8.3
 
