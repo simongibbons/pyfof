@@ -25,9 +25,10 @@ std::vector< std::vector<size_t> > friends_of_friends_brute(
 	size_t ndim,
 	double linking_length
 ) {
+    auto result = std::vector< std::vector< size_t > >();
+
     //Create list of unused points with indices
     std::vector<Point> unused;
-    std::vector< std::vector< size_t > > groups;
     for(size_t i=0 ; i<npts ; ++i) {
         unused.push_back(std::make_pair(i, data + i*ndim));
     }
@@ -57,7 +58,8 @@ std::vector< std::vector<size_t> > friends_of_friends_brute(
                 unused.end()
             );
         }
-        groups.push_back(group);
+        std::sort(group.begin(), group.end());
+        result.push_back(group);
     }
-    return groups;
+    return result;
 }
