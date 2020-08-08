@@ -44,12 +44,12 @@ std::vector< std::vector<size_t> > friends_of_friends_brute(
         	toadd.pop_back();
         	group.push_back(point.first);
 
-        	for (auto i = 0; i < unused.size(); ++i) {
-        		if(dist(unused[i].second, point.second, ndim) < linking_length) {
-                    toadd.push_back(unused[i]);
-                    unused[i].second = nullptr;  // Mark the unused point to be deleted
-                }
-        	}
+            for (auto& unused_point: unused) {
+                if(dist(unused_point.second, point.second, ndim) < linking_length) {
+                    toadd.push_back(unused_point);
+                    unused_point.second = nullptr;  // Mark the unused point to be deleted
+                }     
+            }
 
             // Remove any deleted points
         	unused.erase(
