@@ -82,7 +82,7 @@ with io.open(os.path.join(this_directory, "README.md"), encoding="utf-8") as f:
 extensions = [
     Extension(
         "pyfof",
-        sources=["pyfof/pyfof" + ext, "pyfof/fof.cc"],
+        sources=["pyfof/pyfof" + ext, "pyfof/fof.cc", "pyfof/fof_brute.cc"],
         extra_compile_args=["-std=c++11", "-Wno-return-type"],
         language="c++",
     )
