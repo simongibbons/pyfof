@@ -14,8 +14,8 @@ def test_two_points_seperated_on_x_axis(dimensions, dtype):
 
     assert points.shape == (2, dimensions)
 
-    assert pyfof.friends_of_friends(points, 0.5) == [[0], [1]]
-    assert pyfof.friends_of_friends(points, 0.999) == [[0], [1]]
+    assert sorted(pyfof.friends_of_friends(points, 0.5)) == [[0], [1]]
+    assert sorted(pyfof.friends_of_friends(points, 0.999)) == [[0], [1]]
     assert pyfof.friends_of_friends(points, 1.001) == [[0, 1]]
     assert pyfof.friends_of_friends(points, 2.0) == [[0, 1]]
 
@@ -30,7 +30,7 @@ def test_pass_in_points_as_a_list():
 
 def test_use_brute_force_implementation():
     points = [[0, 1], [0, 0]]
-    assert pyfof.friends_of_friends(points, 0.5, use_brute=True) == [[0], [1]]
+    assert sorted(pyfof.friends_of_friends(points, 0.5, use_brute=True)) == [[0], [1]]
 
 
 def test_no_points():

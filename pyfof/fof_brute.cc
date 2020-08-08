@@ -1,8 +1,12 @@
+#include "fof_brute.hpp"
+
+#include <algorithm>
 #include <vector>
-#include <list>
 #include <cmath>
 
 namespace {
+
+typedef std::pair<size_t, double*> Point;
 
 double dist(double *p1, double *p2, size_t ndim) {
     double d2 = 0.;
@@ -21,39 +25,41 @@ std::vector< std::vector<size_t> > friends_of_friends_brute(
 	size_t ndim,
 	double linking_length
 ) {
-  
-	typedef std::pair<size_t, double*> Point;
+    auto result = std::vector< std::vector< size_t > >();
 
     //Create list of unused points with indices
-    std::list<Point> unused;
-    std::vector< std::vector< size_t > > groups;
+    std::vector<Point> unused;
     for(size_t i=0 ; i<npts ; ++i) {
         unused.push_back(std::make_pair(i, data + i*ndim));
     }
 
     //If there are unused points try to create a new group
-    while( unused.size() > 0 ) {
+    while( !unused.empty() ) {
     	auto group = std::vector<size_t>();
     	auto toadd = std::vector<Point>();
-        toadd.push_back(unused.front());
-        unused.pop_front();
+        toadd.push_back(unused.back());
+        unused.pop_back();
 
         while (!toadd.empty()) {
         	auto point = toadd.back();
         	toadd.pop_back();
         	group.push_back(point.first);
 
-            auto unused_it = unused.begin();
-            while(unused_it != unused.end()) {
-                if(dist(unused_it->second, point.second, ndim) < linking_length) {
-                    toadd.push_back(*unused_it);
-                    unused.erase(unused_it++);
-                }  else {
-                	++unused_it;
-            	}
+            for (auto& unused_point: unused) {
+                if(dist(unused_point.second, point.second, ndim) < linking_length) {
+                    toadd.push_back(unused_point);
+                    unused_point.second = nullptr;  // Mark the unused point to be deleted
+                }     
             }
+
+            // Remove any deleted points
+        	unused.erase(
+                std::remove_if(unused.begin(), unused.end(), [](Point p){return p.second == nullptr;}),
+                unused.end()
+            );
         }
-        groups.push_back(group);
+        std::sort(group.begin(), group.end());
+        result.push_back(group);
     }
-    return groups;
+    return result;
 }
