@@ -2,12 +2,12 @@
 """
 Created on Thu Mar 26 17:59:28 2015
 
-@author: sljg2
+@author: simongibbons
 """
 
 __all__ = ["friends_of_friends"]
 __version__ = "0.1.3-dev"
-__author__ = "Simon Gibbons (sljg2@ast.cam.ac.uk)"
+__author__ = "Simon Gibbons (simongibbons@gmail.com)"
 __copyright__ = "Copyright 2015 Simon Gibbons"
 
 cimport numpy as np
@@ -63,4 +63,3 @@ def friends_of_friends(data, double linking_length, bint use_brute = False):
             num_dimensions,
             linking_length,
         )
-

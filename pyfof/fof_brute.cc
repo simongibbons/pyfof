@@ -20,10 +20,10 @@ double dist(double *p1, double *p2, size_t ndim) {
 
 // A brute force friends of friends finder without the Rtree accelerator.
 std::vector< std::vector<size_t> > friends_of_friends_brute(
-	double *data,
-	size_t npts,
-	size_t ndim,
-	double linking_length
+    double *data,
+    size_t npts,
+    size_t ndim,
+    double linking_length
 ) {
     auto result = std::vector< std::vector< size_t > >();
 
@@ -35,15 +35,15 @@ std::vector< std::vector<size_t> > friends_of_friends_brute(
 
     //If there are unused points try to create a new group
     while( !unused.empty() ) {
-    	auto group = std::vector<size_t>();
-    	auto toadd = std::vector<Point>();
+        auto group = std::vector<size_t>();
+        auto toadd = std::vector<Point>();
         toadd.push_back(unused.back());
         unused.pop_back();
 
         while (!toadd.empty()) {
-        	auto point = toadd.back();
-        	toadd.pop_back();
-        	group.push_back(point.first);
+            auto point = toadd.back();
+            toadd.pop_back();
+            group.push_back(point.first);
 
             for (auto& unused_point: unused) {
                 if(dist(unused_point.second, point.second, ndim) < linking_length) {
@@ -53,7 +53,7 @@ std::vector< std::vector<size_t> > friends_of_friends_brute(
             }
 
             // Remove any deleted points
-        	unused.erase(
+            unused.erase(
                 std::remove_if(unused.begin(), unused.end(), [](Point p){return p.second == nullptr;}),
                 unused.end()
             );
